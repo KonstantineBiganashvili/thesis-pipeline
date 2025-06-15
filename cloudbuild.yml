@@ -34,6 +34,6 @@ steps:
     args:
       - -c
       - |
-        gsutil -m cp -r dags/*.py gs://<YOUR_COMPOSER_BUCKET>/dags/
+        gsutil -m cp -r dags/*.py gs://europe-west3-thesis-compose-2dd8c22b-bucket/dags/
 
 timeout: 1200s
