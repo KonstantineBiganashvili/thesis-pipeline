@@ -24,7 +24,6 @@ with DAG(
         destination_project_dataset_table="raw.clickstream",
         source_format="NEWLINE_DELIMITED_JSON",
         write_disposition="WRITE_APPEND",
-        time_partitioning={"type": "HOUR"},
     )
 
     transform_sql = BigQueryInsertJobOperator(
@@ -39,7 +38,6 @@ with DAG(
                         COUNTIF(event = 'purchase')    AS purchases,
                         APPROX_QUANTILES(latency_ms, 100)[SAFE_OFFSET(50)] AS p50_latency
                     FROM `raw.clickstream`
-                    WHERE _PARTITIONTIME = TIMESTAMP_TRUNC(CURRENT_TIMESTAMP(), HOUR)
                     GROUP BY user_id;
                 """,
                 "useLegacySql": False,
