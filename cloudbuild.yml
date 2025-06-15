@@ -1,0 +1,32 @@
+steps:
+  - name: python:3.11-slim
+    id: test
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        pip install apache-airflow==2.10.5 pytest
+        pytest -q tests
+
+  - name: 'gcr.io/cloud-builders/docker'
+    id: build-img
+    args:
+      - build
+      - '-t'
+      - europe-west3-docker.pkg.dev/$PROJECT_ID/thesis-docker/datagenerator:$COMMIT_SHA
+      - .
+  - name: 'gcr.io/cloud-builders/docker'
+    id: push-img
+    args:
+      - push
+      - europe-west3-docker.pkg.dev/$PROJECT_ID/thesis-docker/datagenerator:$COMMIT_SHA
+
+  - name: gcr.io/google.com/cloudsdktool/cloud-sdk
+    id: sync-dags
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        gsutil -m cp -r dags/*.py gs://<YOUR_COMPOSER_BUCKET>/dags/
+
+timeout: 1200s
