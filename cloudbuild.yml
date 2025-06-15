@@ -8,8 +8,12 @@ steps:
     args:
       - -c
       - |
-        pip install apache-airflow==2.10.5 pytest
-        pytest -q tests
+        # install core Airflow plus the GCP provider and clients
+        pip install apache-airflow==2.10.5 \
+                    apache-airflow-providers-google \
+                    google-cloud-storage \
+                    google-cloud-bigquery \
+                    pytest
 
   - name: 'gcr.io/cloud-builders/docker'
     id: build-img
