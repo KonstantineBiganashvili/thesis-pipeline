@@ -24,14 +24,14 @@ def test_task_count():
     assert not missing, f"Missing tasks in clickstream_etl DAG: {missing}"
 
 def test_default_args():
-    import clickstream_etl
+    from dags import clickstream_etl
     dag = clickstream_etl.dag
     defaults = dag.default_args
     assert defaults.get("retries", 0) >= 1, "Default 'retries' should be at least 1"
     assert "retry_delay" in defaults, "Default 'retry_delay' is missing"
 
 def test_schedule_interval():
-    import clickstream_etl
+    from dags import clickstream_etl
     dag = clickstream_etl.dag
     assert dag.schedule_interval == "@hourly", (
         f"Expected schedule_interval '@hourly', got {dag.schedule_interval}"
