@@ -1,19 +1,17 @@
+import os
 from airflow import DAG
-from airflow.providers.google.cloud.operators.bigquery import (
-    BigQueryInsertJobOperator,
-)
-from airflow.providers.google.cloud.operators.dataflow import (
-    DataflowTemplatedJobStartOperator,
-)
-from airflow.providers.google.cloud.transfers.gcs_to_bigquery import (
-    GCSToBigQueryOperator,
-)
+from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
+from airflow.providers.google.cloud.transfers.gcs_to_bigquery import GCSToBigQueryOperator
 from airflow.utils.dates import days_ago
 from datetime import timedelta
 
+RAW_BUCKET = os.environ.get("RAW_BUCKET")
+if not RAW_BUCKET:
+    raise ValueError("RAW_BUCKET environment variable is not set")
+
 with DAG(
     dag_id="clickstream_etl",
-    schedule_interval="0 * * * *",   # hourly
+    schedule_interval="0 * * * *",
     start_date=days_ago(1),
     catchup=False,
     default_args={"retries": 3, "retry_delay": timedelta(minutes=5)},
@@ -21,7 +19,7 @@ with DAG(
 
     load_raw = GCSToBigQueryOperator(
         task_id="gcs_to_bq",
-        bucket="{{ var.value.raw_bucket }}",
+        bucket=RAW_BUCKET,
         source_objects=["clickstream/*.json"],
         destination_project_dataset_table="raw.clickstream",
         source_format="NEWLINE_DELIMITED_JSON",
