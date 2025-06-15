@@ -14,7 +14,7 @@ with DAG(
     schedule_interval="0 * * * *",
     start_date=days_ago(1),
     catchup=False,
-    default_args={"retries": 3, "retry_delay": timedelta(minutes=5)},
+    default_args={"retries": 3, "retry_delay": timedelta(seconds=30)},
 ) as dag:
 
     load_raw = GCSToBigQueryOperator(
