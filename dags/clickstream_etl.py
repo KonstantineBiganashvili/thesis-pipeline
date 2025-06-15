@@ -6,7 +6,6 @@ from airflow.utils.dates import days_ago
 from datetime import timedelta
 
 RAW_BUCKET = os.environ.get("RAW_BUCKET")
-
 if not RAW_BUCKET:
     raise ValueError("RAW_BUCKET environment variable is not set")
 
